@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vehicle Requests - UR Fleet Management System</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="asset-manager-dashboard.css">
+    <link rel="stylesheet" href="staff-dashboard.css">
+</head>
+<body>
+    <div class="dashboard-container">
+        <!-- Sidebar Navigation -->
+        <nav class="sidebar">
+            <div class="sidebar-header">
+                <img src="./image/logo_for_ur.png" alt="University of Rwanda Logo" class="logo">
+                <h2>Staff Portal</h2>
+            </div>
+            <ul class="nav-links">
+                <li data-page="dashboard">
+                    <a href="staff-dashboard.html"><i class="fas fa-home"></i> Dashboard</a>
+                </li>
+                <li class="active" data-page="vehicle-requests">
+                    <a href="vehicle-requests.html"><i class="fas fa-car"></i> Vehicle Requests</a>
+                </li>
+                <li data-page="trip-history">
+                    <a href="trip-history.html"><i class="fas fa-history"></i> Trip History</a>
+                </li>
+                <li data-page="notifications">
+                    <a href="notifications.html"><i class="fas fa-bell"></i> Notifications</a>
+                </li>
+            </ul>
+            <div class="sidebar-footer">
+                <a href="#profile"><i class="fas fa-user-circle"></i> Profile</a>
+                <a href="login.html"><i class="fas fa-sign-out-alt"></i> Logout</a>
+            </div>
+        </nav>
+
+        <!-- Main Content Area -->
+        <main class="main-content">
+            <header class="top-bar">
+                <div class="search-bar">
+                    <i class="fas fa-search"></i>
+                    <input type="text" placeholder="Search requests...">
+                </div>
+                <div class="user-info">
+                    <span class="notifications">
+                        <i class="fas fa-bell"></i>
+                        <span class="badge">3</span>
+                    </span>
+                    <div class="user-profile">
+                        <img src="./image/avatar.png" alt="Staff Profile">
+                        <span>Staff Name</span>
+                    </div>
+                </div>
+            </header>
+
+            <div class="content-page active">
+                <div class="section-header">
+                    <h2>Vehicle Requests</h2>
+                    <div class="filters">
+                        <select id="statusFilter">
+                            <option value="all">All Status</option>
+                            <option value="pending">Pending</option>
+                            <option value="approved">Approved</option>
+                            <option value="rejected">Rejected</option>
+                        </select>
+                        <select id="dateFilter">
+                            <option value="all">All Time</option>
+                            <option value="today">Today</option>
+                            <option value="week">This Week</option>
+                            <option value="month">This Month</option>
+                        </select>
+                        <a href="new-request.html" class="btn-primary">
+                            <i class="fas fa-plus"></i> New Request
+                        </a>
+                    </div>
+                </div>
+
+                <div class="requests-table">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Request ID</th>
+                                <th>Date</th>
+                                <th>Purpose</th>
+                                <th>Destination</th>
+                                <th>Passengers</th>
+                                <th>Status</th>
+                                <th>Start Date</th>
+                                <th>End Date</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>REQ-001</td>
+                                <td>2024-02-22</td>
+                                <td>Field Trip</td>
+                                <td>Huye Campus</td>
+                                <td>15</td>
+                                <td><span class="status pending">Pending</span></td>
+                                <td>2024-02-23</td>
+                                <td>2024-02-23</td>
+                                <td>
+                                    <a href="view-request.html?id=REQ-001" class="action-btn" title="View"><i class="fas fa-eye"></i></a>
+                                    <a href="edit-request.html?id=REQ-001" class="action-btn" title="Edit"><i class="fas fa-edit"></i></a>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>REQ-002</td>
+                                <td>2024-02-21</td>
+                                <td>Conference</td>
+                                <td>Kigali Convention Center</td>
+                                <td>4</td>
+                                <td><span class="status approved">Approved</span></td>
+                                <td>2024-02-22</td>
+                                <td>2024-02-22</td>
+                                <td>
+                                    <a href="view-request.html?id=REQ-002" class="action-btn" title="View"><i class="fas fa-eye"></i></a>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>REQ-003</td>
+                                <td>2024-02-20</td>
+                                <td>Research Visit</td>
+                                <td>Kigali Heights</td>
+                                <td>3</td>
+                                <td><span class="status rejected">Rejected</span></td>
+                                <td>2024-02-21</td>
+                                <td>2024-02-21</td>
+                                <td>
+                                    <a href="view-request.html?id=REQ-003" class="action-btn" title="View"><i class="fas fa-eye"></i></a>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Authentication and role verification
+            const isLoggedIn = localStorage.getItem('isLoggedIn');
+            const userRole = localStorage.getItem('userRole');
+
+            if (!isLoggedIn || userRole !== 'staff') {
+                window.location.href = 'login.html';
+                return;
+            }
+
+            // Set staff name from localStorage
+            const username = localStorage.getItem('username');
+            const userProfileName = document.querySelector('.user-profile span');
+            if (userProfileName) {
+                userProfileName.textContent = username;
+            }
+
+            // Handle logout
+            const logoutButton = document.querySelector('.sidebar-footer a[href="login.html"]');
+            if (logoutButton) {
+                logoutButton.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    localStorage.removeItem('isLoggedIn');
+                    localStorage.removeItem('username');
+                    localStorage.removeItem('userRole');
+                    window.location.href = 'login.html';
+                });
+            }
+
+            // Handle URL filter parameter
+            const urlParams = new URLSearchParams(window.location.search);
+            const filter = urlParams.get('filter');
+            if (filter) {
+                const statusFilter = document.getElementById('statusFilter');
+                statusFilter.value = filter;
+            }
+
+            // Handle filters
+            const statusFilter = document.getElementById('statusFilter');
+            const dateFilter = document.getElementById('dateFilter');
+
+            function applyFilters() {
+                const status = statusFilter.value;
+                const date = dateFilter.value;
+                // Here you would typically make an API call to get filtered data
+                // For now, we'll just update the URL
+                const newUrl = new URL(window.location.href);
+                newUrl.searchParams.set('filter', status);
+                newUrl.searchParams.set('date', date);
+                window.history.pushState({}, '', newUrl);
+            }
+
+            statusFilter.addEventListener('change', applyFilters);
+            dateFilter.addEventListener('change', applyFilters);
+        });
+    </script>
+</body>
+</html> 

@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Staff Dashboard - UR Fleet Management System</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="asset-manager-dashboard.css">
+    <link rel="stylesheet" href="staff-dashboard.css">
+</head>
+<body>
+    <div class="dashboard-container">
+        <!-- Sidebar Navigation -->
+        <nav class="sidebar">
+            <div class="sidebar-header">
+                <img src="./image/logo_for_ur.png" alt="University of Rwanda Logo" class="logo">
+                <h2>Staff Portal</h2>
+            </div>
+            <ul class="nav-links">
+                <li class="active" data-page="dashboard">
+                    <a href="staff-dashboard.html"><i class="fas fa-home"></i> Dashboard</a>
+                </li>
+                <li data-page="vehicle-requests">
+                    <a href="vehicle-requests.html"><i class="fas fa-car"></i> Vehicle Requests</a>
+                </li>
+                <li data-page="trip-history">
+                    <a href="trip-history.html"><i class="fas fa-history"></i> Trip History</a>
+                </li>
+                <li data-page="notifications">
+                    <a href="notifications.html"><i class="fas fa-bell"></i> Notifications</a>
+                </li>
+            </ul>
+            <div class="sidebar-footer">
+                <a href="#profile"><i class="fas fa-user-circle"></i> Profile</a>
+                <a href="login.html"><i class="fas fa-sign-out-alt"></i> Logout</a>
+            </div>
+        </nav>
+
+        <!-- Main Content Area -->
+        <main class="main-content">
+            <header class="top-bar">
+                <div class="search-bar">
+                    <i class="fas fa-search"></i>
+                    <input type="text" placeholder="Search requests, trips...">
+                </div>
+                <div class="user-info">
+                    <span class="notifications">
+                        <i class="fas fa-bell"></i>
+                        <span class="badge">3</span>
+                    </span>
+                    <div class="user-profile">
+                        <img src="./image/avatar.png" alt="Staff Profile">
+                        <span>Staff Name</span>
+                    </div>
+                </div>
+            </header>
+
+            <!-- Dashboard Overview -->
+            <div class="dashboard-content">
+                <!-- Quick Stats -->
+                <section class="stats-grid">
+                    <a href="vehicle-requests.html?filter=pending" class="stat-card">
+                        <i class="fas fa-car"></i>
+                        <div class="stat-info">
+                            <h3>Pending Requests</h3>
+                            <p>3</p>
+                        </div>
+                    </a>
+                    <a href="vehicle-requests.html?filter=approved" class="stat-card">
+                        <i class="fas fa-check-circle"></i>
+                        <div class="stat-info">
+                            <h3>Approved Requests</h3>
+                            <p>12</p>
+                        </div>
+                    </a>
+                    <a href="trip-history.html?filter=completed" class="stat-card">
+                        <i class="fas fa-road"></i>
+                        <div class="stat-info">
+                            <h3>Completed Trips</h3>
+                            <p>8</p>
+                        </div>
+                    </a>
+                    <a href="vehicle-requests.html?filter=rejected" class="stat-card">
+                        <i class="fas fa-times-circle"></i>
+                        <div class="stat-info">
+                            <h3>Rejected Requests</h3>
+                            <p>2</p>
+                        </div>
+                    </a>
+                </section>
+
+                <!-- User Statistics Graphs -->
+                <section class="graphs-section">
+                    <div class="graph-container">
+                        <h3>Monthly Trip Requests</h3>
+                        <canvas id="monthlyRequestsChart"></canvas>
+                    </div>
+                    <div class="graph-container">
+                        <h3>Request Status Distribution</h3>
+                        <canvas id="statusDistributionChart"></canvas>
+                    </div>
+                </section>
+
+                <!-- Recent Vehicle Requests -->
+                <section class="recent-requests">
+                    <div class="section-header">
+                        <h2>Recent Vehicle Requests</h2>
+                        <a href="new-request.html" class="btn-primary">
+                            <i class="fas fa-plus"></i> New Request
+                        </a>
+                    </div>
+                    <div class="requests-table">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Request ID</th>
+                                    <th>Date</th>
+                                    <th>Purpose</th>
+                                    <th>Destination</th>
+                                    <th>Passengers</th>
+                                    <th>Status</th>
+                                    <th>Start Date</th>
+                                    <th>End Date</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>REQ-001</td>
+                                    <td>2024-02-22</td>
+                                    <td>Field Trip</td>
+                                    <td>Huye Campus</td>
+                                    <td>15</td>
+                                    <td><span class="status pending">Pending</span></td>
+                                    <td>2024-02-23</td>
+                                    <td>2024-02-23</td>
+                                    <td>
+                                        <a href="view-request.html?id=REQ-001" class="action-btn" title="View"><i class="fas fa-eye"></i></a>
+                                        <a href="edit-request.html?id=REQ-001" class="action-btn" title="Edit"><i class="fas fa-edit"></i></a>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>REQ-002</td>
+                                    <td>2024-02-21</td>
+                                    <td>Conference</td>
+                                    <td>Kigali Convention Center</td>
+                                    <td>4</td>
+                                    <td><span class="status approved">Approved</span></td>
+                                    <td>2024-02-22</td>
+                                    <td>2024-02-22</td>
+                                    <td>
+                                        <a href="view-request.html?id=REQ-002" class="action-btn" title="View"><i class="fas fa-eye"></i></a>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </section>
+            </div>
+        </main>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        // Authentication and role verification
+        document.addEventListener('DOMContentLoaded', function() {
+            const isLoggedIn = localStorage.getItem('isLoggedIn');
+            const userRole = localStorage.getItem('userRole');
+
+            // Check if user is logged in and has staff role
+            if (!isLoggedIn || userRole !== 'staff') {
+                window.location.href = 'login.html';
+                return;
+            }
+
+            // Set staff name from localStorage
+            const username = localStorage.getItem('username');
+            const userProfileName = document.querySelector('.user-profile span');
+            if (userProfileName) {
+                userProfileName.textContent = username;
+            }
+
+            // Handle logout
+            const logoutButton = document.querySelector('.sidebar-footer a[href="login.html"]');
+            if (logoutButton) {
+                logoutButton.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    localStorage.removeItem('isLoggedIn');
+                    localStorage.removeItem('username');
+                    localStorage.removeItem('userRole');
+                    window.location.href = 'login.html';
+                });
+            }
+
+            // Initialize charts
+            function initializeCharts() {
+                // Monthly Requests Chart
+                const monthlyRequestsCtx = document.getElementById('monthlyRequestsChart').getContext('2d');
+                new Chart(monthlyRequestsCtx, {
+                    type: 'line',
+                    data: {
+                        labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
+                        datasets: [{
+                            label: 'Trip Requests',
+                            data: [12, 19, 15, 8, 10, 14],
+                            borderColor: '#3498db',
+                            tension: 0.1
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        plugins: {
+                            legend: {
+                                position: 'top',
+                            }
+                        }
+                    }
+                });
+
+                // Status Distribution Chart
+                const statusDistributionCtx = document.getElementById('statusDistributionChart').getContext('2d');
+                new Chart(statusDistributionCtx, {
+                    type: 'doughnut',
+                    data: {
+                        labels: ['Pending', 'Approved', 'Completed', 'Rejected'],
+                        datasets: [{
+                            data: [3, 12, 8, 2],
+                            backgroundColor: [
+                                '#f1c40f',
+                                '#2ecc71',
+                                '#3498db',
+                                '#e74c3c'
+                            ]
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        plugins: {
+                            legend: {
+                                position: 'right',
+                            }
+                        }
+                    }
+                });
+            }
+
+            // Initialize charts
+            initializeCharts();
+        });
+    </script>
+</body>
+</html> 
