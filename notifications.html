@@ -18,7 +18,7 @@
             </div>
             <ul class="nav-links">
                 <li data-page="dashboard">
-                    <a href="staff-dashboard.html"><i class="fas fa-home"></i> Dashboard</a>
+                    <a href="index.html"><i class="fas fa-home"></i> Dashboard</a>
                 </li>
                 <li data-page="vehicle-requests">
                     <a href="vehicle-requests.html"><i class="fas fa-car"></i> Vehicle Requests</a>
@@ -125,19 +125,12 @@
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             // Authentication and role verification
-            const isLoggedIn = localStorage.getItem('isLoggedIn');
-            const userRole = localStorage.getItem('userRole');
+            const isLoggedIn = true
+            const userRole = 'staff'
 
             if (!isLoggedIn || userRole !== 'staff') {
                 window.location.href = 'login.html';
                 return;
-            }
-
-            // Set staff name from localStorage
-            const username = localStorage.getItem('username');
-            const userProfileName = document.querySelector('.user-profile span');
-            if (userProfileName) {
-                userProfileName.textContent = username;
             }
 
             // Handle logout
