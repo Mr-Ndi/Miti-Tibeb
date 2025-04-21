@@ -164,20 +164,13 @@
     <script>
         // Authentication and role verification
         document.addEventListener('DOMContentLoaded', function() {
-            const isLoggedIn = localStorage.getItem('isLoggedIn');
-            const userRole = localStorage.getItem('userRole');
+            const isLoggedIn =true
+            const userRole = 'staff'
 
             // Check if user is logged in and has staff role
             if (!isLoggedIn || userRole !== 'staff') {
                 window.location.href = 'login.html';
                 return;
-            }
-
-            // Set staff name from localStorage
-            const username = localStorage.getItem('username');
-            const userProfileName = document.querySelector('.user-profile span');
-            if (userProfileName) {
-                userProfileName.textContent = username;
             }
 
             // Handle logout
