@@ -27,6 +27,9 @@
                     <a href="trip-history.html"><i class="fas fa-history"></i> Trip History</a>
                 </li>
                 <li data-page="notifications">
+                    <a href="new-request.html"><i class="fas fa-bell"></i> Notifications</a>
+                </li>
+                <li class="active" data-page="notifications">
                     <a href="notifications.html"><i class="fas fa-bell"></i> Notifications</a>
                 </li>
             </ul>
@@ -66,8 +69,8 @@
                 <div class="new-request">
                     <form id="tripRequestForm">
                         <div class="form-row">
-                            <div class="form-group">
-                                <label for="purpose">Purpose of Trip</label>
+                            <div class="form-group with-icon">
+                                <label for="purpose"><i class="fas fa-flag"></i> Purpose of Trip</label>
                                 <select id="purpose" name="purpose" required>
                                     <option value="">Select Purpose</option>
                                     <option value="field_trip">Field Trip</option>
@@ -77,8 +80,8 @@
                                     <option value="other">Other</option>
                                 </select>
                             </div>
-                            <div class="form-group">
-                                <label for="department">Department</label>
+                            <div class="form-group with-icon">
+                                <label for="department"><i class="fas fa-building"></i> Department</label>
                                 <select id="department" name="department" required>
                                     <option value="">Select Department</option>
                                     <option value="computer_science">Computer Science</option>
@@ -91,30 +94,30 @@
                         </div>
 
                         <div class="form-row">
-                            <div class="form-group">
-                                <label for="destination">Destination</label>
+                            <div class="form-group with-icon">
+                                <label for="destination"><i class="fas fa-map-marker-alt"></i> Destination</label>
                                 <input type="text" id="destination" name="destination" required placeholder="Enter destination">
                             </div>
-                            <div class="form-group">
-                                <label for="passengers">Number of Passengers</label>
+                            <div class="form-group with-icon">
+                                <label for="passengers"><i class="fas fa-users"></i> Number of Passengers</label>
                                 <input type="number" id="passengers" name="passengers" min="1" required>
                             </div>
                         </div>
 
                         <div class="form-row">
-                            <div class="form-group">
-                                <label for="startDateTime">Start Date & Time</label>
+                            <div class="form-group with-icon">
+                                <label for="startDateTime"><i class="fas fa-calendar-plus"></i> Start Date & Time</label>
                                 <input type="datetime-local" id="startDateTime" name="startDateTime" required>
                             </div>
-                            <div class="form-group">
-                                <label for="endDateTime">End Date & Time</label>
+                            <div class="form-group with-icon">
+                                <label for="endDateTime"><i class="fas fa-calendar-minus"></i> End Date & Time</label>
                                 <input type="datetime-local" id="endDateTime" name="endDateTime" required>
                             </div>
                         </div>
 
                         <div class="form-row">
-                            <div class="form-group">
-                                <label for="vehicleType">Preferred Vehicle Type</label>
+                            <div class="form-group with-icon">
+                                <label for="vehicleType"><i class="fas fa-car"></i> Preferred Vehicle Type</label>
                                 <select id="vehicleType" name="vehicleType" required>
                                     <option value="">Select Vehicle Type</option>
                                     <option value="sedan">Sedan</option>
@@ -123,20 +126,24 @@
                                     <option value="bus">Bus</option>
                                 </select>
                             </div>
-                            <div class="form-group">
-                                <label for="specialRequirements">Special Requirements</label>
+                            <div class="form-group with-icon">
+                                <label for="specialRequirements"><i class="fas fa-star"></i> Special Requirements</label>
                                 <input type="text" id="specialRequirements" name="specialRequirements" placeholder="Any special requirements?">
                             </div>
                         </div>
 
-                        <div class="form-group full-width">
-                            <label for="additionalNotes">Additional Notes</label>
+                        <div class="form-group full-width with-icon">
+                            <label for="additionalNotes"><i class="fas fa-sticky-note"></i> Additional Notes</label>
                             <textarea id="additionalNotes" name="additionalNotes" rows="4" placeholder="Any additional information..."></textarea>
                         </div>
 
                         <div class="form-actions">
-                            <button type="button" class="btn-secondary" onclick="window.location.href='vehicle-requests.html'">Cancel</button>
-                            <button type="submit" class="btn-primary">Submit Request</button>
+                            <button type="button" class="btn-secondary" onclick="window.location.href='vehicle-requests.html'">
+                                <i class="fas fa-times"></i> Cancel
+                            </button>
+                            <button type="submit" class="btn-primary">
+                                <i class="fas fa-paper-plane"></i> Submit Request
+                            </button>
                         </div>
                     </form>
                 </div>

@@ -165,8 +165,17 @@ body {
 }
 
 .stat-card i {
-    font-size: 24px;
+    font-size: 28px;
+    padding: 15px;
+    background-color: rgba(52, 152, 219, 0.1);
+    border-radius: 8px;
     color: var(--secondary-color);
+    transition: transform 0.3s, background-color 0.3s;
+}
+
+.stat-card:hover i {
+    transform: scale(1.1);
+    background-color: rgba(52, 152, 219, 0.2);
 }
 
 .stat-info h3 {
@@ -214,6 +223,11 @@ body {
 .section-header h2 {
     margin: 0;
     color: var(--primary-color);
+}
+
+.section-header h2 i {
+    margin-right: 10px;
+    color: var(--secondary-color);
 }
 
 /* Recent Requests Section */
@@ -361,6 +375,99 @@ body {
     border-radius: 4px;
     background-color: white;
     color: var(--dark-gray);
+}
+
+/* Sidebar Icon Enhancements */
+.nav-links li a i {
+    width: 24px;
+    text-align: center;
+    margin-right: 10px;
+    color: var(--dark-gray);
+    transition: color 0.3s;
+}
+
+.nav-links li.active a i,
+.nav-links li:hover a i {
+    color: var(--secondary-color);
+}
+
+/* New Request Form Styles */
+.new-request {
+    background-color: white;
+    padding: 30px;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    margin-bottom: 30px;
+}
+
+.new-request form {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.form-row {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 20px;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.form-group label {
+    font-weight: 500;
+    color: var(--dark-gray);
+}
+
+.form-group input,
+.form-group select,
+.form-group textarea {
+    padding: 12px;
+    border: 1px solid var(--light-gray);
+    border-radius: 6px;
+    font-size: 14px;
+    transition: border-color 0.3s, box-shadow 0.3s;
+}
+
+.form-group input:focus,
+.form-group select:focus,
+.form-group textarea:focus {
+    border-color: var(--secondary-color);
+    box-shadow: 0 0 0 2px rgba(52, 152, 219, 0.2);
+    outline: none;
+}
+
+.form-group.full-width {
+    grid-column: 1 / -1;
+}
+
+.form-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 15px;
+    margin-top: 20px;
+}
+
+/* Icon Styles for Form Fields */
+.form-group i {
+    position: absolute;
+    left: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--dark-gray);
+}
+
+.form-group.with-icon {
+    position: relative;
+}
+
+.form-group.with-icon input,
+.form-group.with-icon select {
+    padding-left: 40px;
 }
 
 /* Responsive Design */
