@@ -1,36 +1,134 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# 🌳 Miti Tibeb — *Art of Trees*
 
-## Getting Started
+**Miti** *(Swahili: Trees)*  
+**Tibeb** *(Amharic: Art / Wisdom)*  
 
-First, run the development server:
+*Miti Tibeb* is a frontend project dedicated to the celebration of craftsmanship, nature, and elegance in timber-based furniture. Built with **Next.js**, it interfaces with a powerful Go backend to deliver a poetic and immersive online store experience.
+
+---
+
+## 🌐 Overview
+
+This application serves as the user-facing frontend for the [Miti Arts Backend](https://github.com/Mr-Ndi/Miti_Art), enabling:
+- Product discovery
+- User and vendor authentication
+- Secure transactions and session handling
+- Dynamic content delivery via RESTful APIs
+
+---
+
+## 🛠 Tech Stack
+
+- **Frontend Framework**: [Next.js](https://nextjs.org/)
+- **Language**: TypeScript
+- **Styling**: Tailwind CSS *(optional if enabled)*
+- **API Communication**: REST using `fetch` or `axios`
+- **Backend**: [Miti Arts Backend (Go, Gin, PostgreSQL)](https://github.com/Mr-Ndi/Miti_Art)
+
+---
+
+## 🔐 Authentication & API Integration
+
+This project consumes secure JWT-protected endpoints provided by the backend, including:
+
+### 🔑 Auth Routes
+- `POST /user/login`
+- `POST /user/register`
+- `POST /vendor/register` (with token header)
+- `POST /admin/invite` *(admin only)*
+
+### 🪑 Product & Vendor Features
+- Search and filtering for furniture
+- Vendor management and onboarding via email token invites
+
+Refer to the [Miti Arts API Docs](https://github.com/Mr-Ndi/Miti_Art#api-endpoints) for detailed payloads and responses.
+
+---
+
+## 🚀 Getting Started
+
+### 1. Clone the Repository
+
+```bash
+git clone https://github.com/your-username/miti-tibeb.git
+cd miti-tibeb
+````
+
+### 2. Install Dependencies
+
+```bash
+npm install
+```
+
+### 3. Configure Environment Variables
+
+Create a `.env.local` file in the root:
+
+```env
+NEXT_PUBLIC_API_BASE_URL=http://localhost:8080
+```
+
+*(Adjust the backend URL as needed)*
+
+---
+
+## 🧪 Development
+
+Start the local development server:
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open [http://localhost:3000](http://localhost:3000) in your browser.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+---
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## 🧱 Project Structure
 
-## Learn More
+```bash
+.
+├── app/               # App Router pages (or pages/ if using legacy routing)
+├── components/        # Reusable UI components
+├── lib/               # API helpers, utilities
+├── public/            # Static assets
+├── styles/            # Global styles or Tailwind config
+├── tsconfig.json      # TypeScript config
+└── .env.local         # Environment variables
+```
 
-To learn more about Next.js, take a look at the following resources:
+---
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## 🤝 Contributing
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+We welcome contributors who share the love of nature, craftsmanship, and clean code.
 
-## Deploy on Vercel
+1. Fork the repo
+2. Create a feature branch:
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+   ```bash
+   git checkout -b feature/amazing-feature
+   ```
+3. Commit and push:
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+   ```bash
+   git commit -m "Add amazing feature"
+   git push origin feature/amazing-feature
+   ```
+4. Open a Pull Request
+
+---
+
+## 📜 License
+
+This project inherits the philosophy of open craftsmanship — built to inspire.
+License details TBD.
+
+---
+
+## 🌿 Inspiration
+
+> “To dwell among trees is to live within poetry itself.”
+> — *Miti Tibeb*
+
+---
