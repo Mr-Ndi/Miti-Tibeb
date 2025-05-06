@@ -45,11 +45,11 @@ export default function Navbar() {
 
       {/* Right Side */}
       <div className="flex items-center gap-4">
-        <input
-          type="text"
-          placeholder="Search..."
-          className="px-2 py-1 rounded-md text-black text-sm focus:outline-none"
-        />
+      <input
+        type="text"
+        placeholder="Search..."
+        className="ml-auto mr-4 px-3 py-1 rounded-md bg-white text-black placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-green-500"
+      />
         <ShoppingCart className="w-5 h-5 cursor-pointer hover:text-green-300" />
 
         {/* Auth Section */}
