@@ -11,10 +11,14 @@ interface UserInfo {
 
 export default function Navbar() {
   const [user, setUser] = useState<UserInfo | null>(null);
+  const [loading, setLoading] = useState(true); // <-- Add loading state
 
   useEffect(() => {
     const token = localStorage.getItem('token');
-    if (!token) return;
+    if (!token) {
+      setLoading(false);
+      return;
+    }
 
     fetch('http://localhost:8080/user/me', {
       headers: {
@@ -26,15 +30,14 @@ export default function Navbar() {
         return res.json();
       })
       .then(data => setUser(data))
-      .catch(() => setUser(null));
+      .catch(() => setUser(null))
+      .finally(() => setLoading(false));
   }, []);
 
   return (
-    <nav className="bg-[#2E2E2E] text-white px-6 py-4 flex items-center justify-between shadow-md">
-      {/* Logo */}
+    <nav className="fixed top-0 left-0 w-full z-50 bg-[#2E2E2E] text-white px-6 py-4 flex items-center justify-between shadow-md">
       <div className="text-2xl font-bold tracking-wide">Miti Tibeb</div>
 
-      {/* Navigation */}
       <ul className="hidden md:flex gap-6 text-sm font-medium">
         <li className="hover:text-orange-400 cursor-pointer">Home</li>
         <li className="hover:text-orange-400 cursor-pointer">Products</li>
@@ -49,14 +52,19 @@ export default function Navbar() {
           placeholder="Search..."
           className="ml-auto mr-4 px-3 py-1 rounded-md bg-white text-black placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-orange-400"
         />
-        <ShoppingCart className="w-5 h-5 cursor-pointer hover:text-orange-400" />
 
-        {user ? (
-          <Link href="/profile" className="flex items-center gap-1 hover:text-orange-400">
-            <User className="w-5 h-5" />
-            <span className="hidden md:inline">{user.email}</span>
-          </Link>
-        ) : (
+        {/* Only show these if not loading */}
+        {!loading && user && (
+          <>
+            <ShoppingCart className="w-5 h-5 cursor-pointer hover:text-orange-400" />
+            <Link href="/profile" className="flex items-center gap-1 hover:text-orange-400">
+              <User className="w-5 h-5" />
+              <span className="hidden md:inline">{user.email}</span>
+            </Link>
+          </>
+        )}
+
+        {!loading && !user && (
           <Link href="/login" className="flex items-center gap-1 hover:text-orange-400">
             <User className="w-5 h-5" />
             <span className="hidden md:inline">Login</span>
