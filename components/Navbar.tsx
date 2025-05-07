@@ -11,8 +11,7 @@ interface UserInfo {
 
 export default function Navbar() {
   const [user, setUser] = useState<UserInfo | null>(null);
-  const [loading, setLoading] = useState(true); // <-- Add loading state
-
+  const [loading, setLoading] = useState(true);
   useEffect(() => {
     const token = localStorage.getItem('token');
     if (!token) {
@@ -39,11 +38,20 @@ export default function Navbar() {
       <div className="text-2xl font-bold tracking-wide">Miti Tibeb</div>
 
       <ul className="hidden md:flex gap-6 text-sm font-medium">
-        <li className="hover:text-orange-400 cursor-pointer">Home</li>
-        <li className="hover:text-orange-400 cursor-pointer">Products</li>
-        <li className="hover:text-orange-400 cursor-pointer">About</li>
-        <li className="hover:text-orange-400 cursor-pointer">Contact</li>
-      </ul>
+        <li>
+          <Link href="/" className="hover:text-orange-400">Home</Link>
+        </li>
+        <li>
+          <Link href="/products" className="hover:text-orange-400">Products</Link>
+        </li>
+        <li>
+          <Link href="/about" className="hover:text-orange-400">About</Link>
+        </li>
+        <li>
+          <Link href="/contact" className="hover:text-orange-400">Contact</Link>
+        </li> 
+    </ul>
+
 
       {/* Right Side */}
       <div className="flex items-center gap-4">
