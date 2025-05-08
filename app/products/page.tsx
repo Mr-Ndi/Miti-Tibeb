@@ -3,6 +3,7 @@
 import Image from 'next/image';
 import { useState } from 'react';
 import { motion } from 'framer-motion';
+import Link from 'next/link';
 
 const products = [
   {
@@ -89,29 +90,33 @@ export default function ProductsPage() {
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8">
           {filteredProducts.map((product, index) => (
             <motion.div
-              key={product.id}
-              className="bg-[#1F1F1F] rounded-lg overflow-hidden p-4"
-              initial={{ opacity: 0, y: 30 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: index * 0.1 }}
-            >
-              <Image
-                src={product.imageUrl}
-                alt={product.name}
-                width={400}
-                height={300}
-                className="rounded mb-4"
-              />
-              <h2 className="text-xl font-semibold">{product.name}</h2>
-              <p className="text-sm text-gray-400">{product.vendor}</p>
-              <div className="flex justify-between items-center mt-2">
-                <span className="text-orange-400 font-bold">${product.price}</span>
-                <div className="text-sm text-gray-300">
-                  <span className="mr-2">{product.category}</span>
-                  <span className="italic">{product.material}</span>
-                </div>
+            key={product.id}
+            className="bg-[#1F1F1F] rounded-lg overflow-hidden p-4"
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: index * 0.1 }}
+          >
+            <Image
+              src={product.imageUrl}
+              alt={product.name}
+              width={400}
+              height={300}
+              className="rounded mb-4"
+            />
+            <h2 className="text-xl font-semibold">{product.name}</h2>
+            <p className="text-sm text-gray-400">{product.vendor}</p>
+            <div className="flex justify-between items-center mt-2">
+              <span className="text-orange-400 font-bold">${product.price}</span>
+              <div className="text-sm text-gray-300">
+                <span className="mr-2">{product.category}</span>
+                <span className="italic">{product.material}</span>
               </div>
-            </motion.div>
+            </div>
+            <Link href={`/products/${product.id}`}>
+              <button className="text-orange-400 hover:underline mt-4">View Details</button>
+            </Link>
+          </motion.div>
+          
           ))}
         </div>
       </div>

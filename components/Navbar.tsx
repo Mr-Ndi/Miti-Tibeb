@@ -55,12 +55,6 @@ export default function Navbar() {
 
       {/* Right Side */}
       <div className="flex items-center gap-4">
-        {/* <input
-          type="text"
-          placeholder="Search..."
-          className="ml-auto mr-4 px-3 py-1 rounded-md bg-white text-black placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-orange-400"
-        /> */}
-
         {/* Only show these if not loading */}
         {!loading && user && (
           <>
