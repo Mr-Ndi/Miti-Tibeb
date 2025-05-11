@@ -39,8 +39,9 @@ export default function ProductsPage() {
   useEffect(() => {
     async function loadProducts() {
       try {
-        const data = await fetchApi<Product[]>('/user/furniture');
-        setProducts(data);
+        const data = await fetchApi<any>('/user/furniture');
+        // If the API returns { data: [...] }, extract the array
+        setProducts(Array.isArray(data) ? data : (data.data || []));
       } catch (e) {
         console.error('Failed to load products:', e);
         setProducts([]);
@@ -51,12 +52,13 @@ export default function ProductsPage() {
     loadProducts();
   }, []);
 
-  const filteredProducts = products.filter((product) => {
+  // Defensive: ensure products is always an array before filtering
+  const filteredProducts = Array.isArray(products) ? products.filter((product) => {
     const matchesSearch = product.name.toLowerCase().includes(search.toLowerCase());
     const matchesCategory = selectedCategory ? product.category === selectedCategory : true;
     const matchesMaterial = selectedMaterial ? product.material === selectedMaterial : true;
     return matchesSearch && matchesCategory && matchesMaterial;
-  });
+  }) : [];
 
   return (
     <main className="bg-[#2E2E2E] text-white min-h-screen px-4 py-16">

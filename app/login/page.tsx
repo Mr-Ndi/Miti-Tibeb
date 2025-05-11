@@ -37,7 +37,7 @@ export default function LoginPage() {
       localStorage.setItem('token', data.token);
       
       // Redirect to home page
-      router.push('/');
+      router.push('/products');
     } catch (err) {
       setError(err instanceof Error ? err.message : 'An error occurred');
     }
