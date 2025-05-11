@@ -1,8 +1,9 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { ShoppingCart, User } from 'lucide-react';
+import { ShoppingCart, User, LogOut } from 'lucide-react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 
 interface UserInfo {
   email: string;
@@ -10,8 +11,10 @@ interface UserInfo {
 }
 
 export default function Navbar() {
+  const router = useRouter();
   const [user, setUser] = useState<UserInfo | null>(null);
   const [loading, setLoading] = useState(true);
+
   useEffect(() => {
     const token = localStorage.getItem('token');
     if (!token) {
@@ -19,7 +22,7 @@ export default function Navbar() {
       return;
     }
 
-    fetch('http://localhost:8080/user/me', {
+    fetch(`${process.env.NEXT_PUBLIC_API_URL}/user/me`, {
       headers: {
         Authorization: `Bearer ${token}`,
       },
@@ -29,13 +32,24 @@ export default function Navbar() {
         return res.json();
       })
       .then(data => setUser(data))
-      .catch(() => setUser(null))
+      .catch(() => {
+        setUser(null);
+        localStorage.removeItem('token');
+      })
       .finally(() => setLoading(false));
   }, []);
 
+  const handleLogout = () => {
+    localStorage.removeItem('token');
+    setUser(null);
+    router.push('/');
+  };
+
   return (
     <nav className="fixed top-0 left-0 w-full z-50 bg-[#2E2E2E] text-white px-6 py-4 flex items-center justify-between shadow-md">
-      <div className="text-2xl font-bold tracking-wide">Miti Tibeb</div>
+      <Link href="/" className="text-2xl font-bold tracking-wide hover:text-orange-400">
+        Miti Tibeb
+      </Link>
 
       <ul className="hidden md:flex gap-6 text-sm font-medium">
         <li>
@@ -49,28 +63,43 @@ export default function Navbar() {
         </li>
         <li>
           <Link href="/contact" className="hover:text-orange-400">Contact</Link>
-        </li> 
-    </ul>
-
+        </li>
+      </ul>
 
       {/* Right Side */}
       <div className="flex items-center gap-4">
-        {/* Only show these if not loading */}
         {!loading && user && (
           <>
-            <ShoppingCart className="w-5 h-5 cursor-pointer hover:text-orange-400" />
+            <Link href="/cart" className="hover:text-orange-400">
+              <ShoppingCart className="w-5 h-5" />
+            </Link>
             <Link href="/profile" className="flex items-center gap-1 hover:text-orange-400">
               <User className="w-5 h-5" />
               <span className="hidden md:inline">{user.email}</span>
             </Link>
+            <button 
+              onClick={handleLogout}
+              className="flex items-center gap-1 hover:text-orange-400"
+            >
+              <LogOut className="w-5 h-5" />
+              <span className="hidden md:inline">Logout</span>
+            </button>
           </>
         )}
 
         {!loading && !user && (
-          <Link href="/login" className="flex items-center gap-1 hover:text-orange-400">
-            <User className="w-5 h-5" />
-            <span className="hidden md:inline">Login</span>
-          </Link>
+          <div className="flex items-center gap-4">
+            <Link href="/login" className="flex items-center gap-1 hover:text-orange-400">
+              <User className="w-5 h-5" />
+              <span className="hidden md:inline">Login</span>
+            </Link>
+            <Link 
+              href="/signup" 
+              className="hidden md:block px-4 py-2 bg-orange-500 text-white rounded hover:bg-orange-600"
+            >
+              Sign Up
+            </Link>
+          </div>
         )}
       </div>
     </nav>
