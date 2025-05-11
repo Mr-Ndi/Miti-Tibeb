@@ -122,7 +122,7 @@ export default function HomePage() {
   }, []);
 
   // Show the 3 most recent products
-  const recentProducts = products.slice(0, 3);
+  const recentProducts = Array.isArray(products) ? products.slice(0, 3) : [];
 
   return (
     <main className="bg-[#2E2E2E] text-white px-6 py-12 space-y-24">
