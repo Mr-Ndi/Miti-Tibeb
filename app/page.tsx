@@ -2,10 +2,54 @@
 import { motion } from 'framer-motion';
 import Image from 'next/image';
 import Link from 'next/link';
-import { use } from 'react';
+import { useEffect, useState } from 'react';
 
+const materialDescriptions: Record<string, string> = {
+  Eucalyptus: 'Discover our elegant Eucalyptus creations, known for their durability and beauty.',
+  Mahogany: 'Explore luxurious Mahogany pieces, prized for their rich color and fine grain.',
+  Pine: 'Browse affordable and versatile Pine furniture, perfect for any home.',
+  Podocarpus: 'Experience the unique charm of Podocarpus woodwork.',
+  Cedrela: 'Admire the lightness and resilience of Cedrela-crafted items.',
+};
+
+const materialImages: Record<string, string> = {
+  Eucalyptus: '/icon2.png',
+  Mahogany: '/icon2.png',
+  Pine: '/icon2.png',
+  Podocarpus: '/icon2.png',
+  Cedrela: '/icon2.png',
+};
 
 export default function HomePage() {
+  const [topMaterials, setTopMaterials] = useState<string[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    async function fetchProducts() {
+      try {
+        const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/user/furniture`);
+        const products = await res.json();
+        // Count materials
+        const materialCount: Record<string, number> = {};
+        for (const product of products) {
+          if (product.material) {
+            materialCount[product.material] = (materialCount[product.material] || 0) + 1;
+          }
+        }
+        // Sort materials by frequency
+        const sorted = Object.entries(materialCount)
+          .sort((a, b) => b[1] - a[1])
+          .map(([mat]) => mat);
+        setTopMaterials(sorted.slice(0, 3));
+      } catch (e) {
+        setTopMaterials(['Eucalyptus', 'Mahogany', 'Pine']); // fallback
+      } finally {
+        setLoading(false);
+      }
+    }
+    fetchProducts();
+  }, []);
+
   return (
     <main className="bg-[#2E2E2E] text-white px-6 py-12 space-y-24">
 
@@ -38,7 +82,7 @@ export default function HomePage() {
         />
       </motion.section>
 
-      {/* Featured Products */}
+      {/* Featured Materials */}
       <motion.section
         className="max-w-6xl mx-auto"
         initial={{ opacity: 0, y: 40 }}
@@ -47,18 +91,34 @@ export default function HomePage() {
       >
         <h2 className="text-2xl font-bold mb-6">Recent Uploaded Products</h2>
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8">
-          {[1, 2, 3].map((id) => (
-            <motion.div
-              key={id}
-              className="bg-[#1F1F1F] p-4 rounded-lg shadow hover:shadow-orange-500/20 transition"
-              whileHover={{ scale: 1.03 }}
-            >
-              <div className="bg-gray-700 h-40 mb-4 rounded" />
-              <h3 className="text-lg font-semibold mb-2">Product {id}</h3>
-              <p className="text-sm text-gray-400 mb-4">Short description of product {id}.</p>
-              <button className="text-orange-400 hover:underline">View Details</button>
-            </motion.div>
-          ))}
+          {loading ? (
+            [1, 2, 3].map((id) => (
+              <div key={id} className="bg-[#1F1F1F] p-4 rounded-lg animate-pulse h-64" />
+            ))
+          ) : (
+            topMaterials.map((material) => (
+              <motion.div
+                key={material}
+                className="bg-[#1F1F1F] p-4 rounded-lg shadow hover:shadow-orange-500/20 transition flex flex-col"
+                whileHover={{ scale: 1.03 }}
+              >
+                <Image
+                  src={materialImages[material] || '/icon2.png'}
+                  alt={material}
+                  width={400}
+                  height={160}
+                  className="rounded mb-4 object-cover"
+                />
+                <h3 className="text-lg font-semibold mb-2">{material}</h3>
+                <p className="text-sm text-gray-400 mb-4">
+                  {materialDescriptions[material] || `Explore our finest ${material} creations.`}
+                </p>
+                <Link href={`/products?material=${encodeURIComponent(material)}`}>
+                  <button className="text-orange-400 hover:underline mt-auto">View More</button>
+                </Link>
+              </motion.div>
+            ))
+          )}
         </div>
       </motion.section>
 
@@ -74,7 +134,7 @@ export default function HomePage() {
           Miti Tibeb blends the elegance of woodwork with African artistic heritage. Each piece we craft carries a story rooted in culture, sustainability, and care.
         </p>
         <p className="text-gray-400">
-          We also offer interior design samples that showcase our partners’ skill in both manufacturing and installing wooden works — ensuring peace and harmony in your space.
+          We also offer interior design samples that showcase our partners' skill in both manufacturing and installing wooden works — ensuring peace and harmony in your space.
         </p>
       </motion.section>
 
