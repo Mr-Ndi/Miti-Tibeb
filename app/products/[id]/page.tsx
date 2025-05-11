@@ -22,9 +22,9 @@ interface Product {
 
 async function getProduct(id: string): Promise<Product | null> {
   try {
-    const apiUrl = process.env.API_URL;
+    const apiUrl = process.env.NEXT_PUBLIC_API_URL;
     if (!apiUrl) {
-      throw new Error('API_URL is not defined');
+      throw new Error('NEXT_PUBLIC_API_URL is not defined');
     }
 
     const res = await fetch(`${apiUrl}/products/${id}`, {

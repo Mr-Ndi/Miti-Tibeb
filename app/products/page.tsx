@@ -1,9 +1,10 @@
 'use client';
 
 import Image from 'next/image';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import Link from 'next/link';
+import { useSearchParams } from 'next/navigation';
 
 const products = [
   {
@@ -34,6 +35,14 @@ export default function ProductsPage() {
   const [search, setSearch] = useState('');
   const [selectedCategory, setCategory] = useState('');
   const [selectedMaterial, setMaterial] = useState('');
+  const searchParams = useSearchParams();
+
+  useEffect(() => {
+    const materialFromQuery = searchParams.get('material');
+    if (materialFromQuery) {
+      setMaterial(materialFromQuery);
+    }
+  }, [searchParams]);
 
   const filteredProducts = products.filter((product) => {
     const matchesSearch = product.name.toLowerCase().includes(search.toLowerCase());
@@ -116,7 +125,6 @@ export default function ProductsPage() {
               <button className="text-orange-400 hover:underline mt-4">View Details</button>
             </Link>
           </motion.div>
-          
           ))}
         </div>
       </div>
