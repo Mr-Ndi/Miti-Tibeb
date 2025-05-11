@@ -28,9 +28,10 @@ interface Product {
   id: string;
   name: string;
   price: number;
-  imageUrl: string;
-  material: string;
   category: string;
+  material: string;
+  imageUrl: string;
+  vendor: string;
 }
 
 // Define material type
@@ -84,100 +85,192 @@ async function getTopMaterials(): Promise<Material[]> {
   }
 }
 
-export default async function Home() {
-  const topMaterials = await getTopMaterials();
+export default function HomePage() {
+  const [products, setProducts] = useState<Product[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    let isMounted = true;
+
+    async function loadProducts() {
+      try {
+        setLoading(true);
+        const data = await fetchApi<Product[]>('/user/furniture');
+        if (isMounted) {
+          setProducts(data);
+          setError(null);
+        }
+      } catch (e) {
+        if (isMounted) {
+          setError('Failed to load products');
+          setProducts([]);
+        }
+      } finally {
+        if (isMounted) {
+          setLoading(false);
+        }
+      }
+    }
+
+    loadProducts();
+
+    // Cleanup function to prevent state updates after unmount
+    return () => {
+      isMounted = false;
+    };
+  }, []);
+
+  // Show the 3 most recent products
+  const recentProducts = products.slice(0, 3);
 
   return (
-    <main className="flex min-h-screen flex-col items-center justify-between">
+    <main className="bg-[#2E2E2E] text-white px-6 py-12 space-y-24">
+
       {/* Hero Section */}
-      <section className="w-full h-[600px] relative">
-        <Image
-          src="/hero-bg.jpg"
-          alt="Hero background"
-          fill
-          className="object-cover"
-          priority
-        />
-        <div className="absolute inset-0 bg-black/50 flex items-center justify-center">
-          <div className="text-center text-white space-y-6">
-            <h1 className="text-5xl font-bold">Welcome to Miti Tibeb</h1>
-            <p className="text-xl">Your one-stop shop for quality furniture</p>
-            <Link href="/products">
-              <Button>Shop Now</Button>
-            </Link>
-          </div>
-        </div>
-      </section>
-
-      {/* Featured Products */}
-      <section className="w-full py-16 px-4 md:px-6">
-        <div className="max-w-7xl mx-auto">
-          <h2 className="text-3xl font-bold text-center mb-12">Featured Products</h2>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {/* Product cards will go here */}
-          </div>
-        </div>
-      </section>
-
-      {/* Recent Uploaded Products */}
-      <section className="w-full py-16 px-4 md:px-6 bg-gray-50">
-        <div className="max-w-7xl mx-auto">
-          <h2 className="text-3xl font-bold text-center mb-12">Popular Materials</h2>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {topMaterials.map((material) => (
-              <div key={material.name} className="bg-white rounded-lg shadow-md overflow-hidden">
-                <div className="p-6">
-                  <h3 className="text-xl font-semibold mb-2">{material.name}</h3>
-                  <p className="text-gray-600 mb-4">{material.description}</p>
-                  <Link href={`/products?material=${material.name}`}>
-                    <Button variant="outline" className="w-full">
-                      View More
-                    </Button>
-                  </Link>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* About Section */}
-      <section className="w-full py-16 px-4 md:px-6">
-        <div className="max-w-7xl mx-auto">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
-            <div>
-              <h2 className="text-3xl font-bold mb-6">About Miti Tibeb</h2>
-              <p className="text-gray-600 mb-4">
-                We are dedicated to providing high-quality furniture and connecting customers with skilled vendors.
-              </p>
-              <Link href="/about">
-                <Button>Learn More</Button>
-              </Link>
-            </div>
-            <div className="relative h-[400px]">
-              <Image
-                src="/about-image.jpg"
-                alt="About Miti Tibeb"
-                fill
-                className="object-cover rounded-lg"
-              />
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Vendor Invite Section */}
-      <section className="w-full py-16 px-4 md:px-6 bg-orange-50">
-        <div className="max-w-7xl mx-auto text-center">
-          <h2 className="text-3xl font-bold mb-6">Are You a Vendor?</h2>
-          <p className="text-gray-600 mb-8 max-w-2xl mx-auto">
-            Join our platform to showcase your furniture and reach more customers.
+      <motion.section
+        className="flex flex-col md:flex-row items-center justify-between gap-10 max-w-6xl mx-auto mt-16"
+        initial={{ opacity: 0, y: 40 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.6 }}
+      >
+        <div>
+          <h1 className="text-4xl md:text-5xl font-bold mb-4 leading-tight">
+            Embrace the Art of Nature with <span className="text-orange-400">Miti Tibeb</span>
+          </h1>
+          <p className="text-lg text-gray-300 mb-6 max-w-lg">
+            Discover handcrafted wooden products rooted in African wisdom and sustainable design.
           </p>
-          <Link href="/vendor/signup">
-            <Button>Become a Vendor</Button>
+          <Link href="/products">
+            <button className="bg-orange-500 text-white px-6 py-2 rounded-md hover:bg-orange-600 transition">
+              Browse Products
+            </button>
           </Link>
         </div>
-      </section>
+        <Image
+          src="/icon2.png"
+          alt="Wood Art"
+          width={500}
+          height={350}
+          className="rounded-lg shadow-lg"
+        />
+      </motion.section>
+
+      {/* Featured Products */}
+      <motion.section
+        className="max-w-6xl mx-auto"
+        initial={{ opacity: 0, y: 40 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.6, delay: 0.1 }}
+      >
+        <h2 className="text-2xl font-bold mb-6">Recent Uploaded Products</h2>
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8">
+          {loading ? (
+            // Loading skeleton
+            [1, 2, 3].map((id) => (
+              <motion.div
+                key={id}
+                className="bg-[#1F1F1F] p-4 rounded-lg shadow hover:shadow-orange-500/20 transition animate-pulse"
+                whileHover={{ scale: 1.03 }}
+              >
+                <div className="bg-gray-700 h-40 mb-4 rounded" />
+                <div className="h-6 bg-gray-700 rounded mb-2" />
+                <div className="h-4 bg-gray-700 rounded w-3/4" />
+              </motion.div>
+            ))
+          ) : error ? (
+            // Error state
+            <div className="col-span-3 text-center text-red-400">
+              {error}
+            </div>
+          ) : recentProducts.length === 0 ? (
+            // No products state
+            <div className="col-span-3 text-center text-gray-400">
+              No products available at the moment.
+            </div>
+          ) : (
+            // Products grid
+            recentProducts.map((product, index) => (
+              <motion.div
+                key={product.id}
+                className="bg-[#1F1F1F] p-4 rounded-lg shadow hover:shadow-orange-500/20 transition"
+                whileHover={{ scale: 1.03 }}
+                initial={{ opacity: 0, y: 30 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: index * 0.1 }}
+              >
+                <Image
+                  src={product.imageUrl}
+                  alt={product.name}
+                  width={400}
+                  height={300}
+                  className="rounded mb-4 object-cover h-40 w-full"
+                />
+                <h3 className="text-lg font-semibold mb-2">{product.name}</h3>
+                <p className="text-sm text-gray-400 mb-4">{product.vendor}</p>
+                <div className="flex justify-between items-center mb-4">
+                  <span className="text-orange-400 font-bold">${product.price}</span>
+                  <div className="text-sm text-gray-300">
+                    <span className="mr-2">{product.category}</span>
+                    <span className="italic">{product.material}</span>
+                  </div>
+                </div>
+                <Link href={`/products/${product.id}`}>
+                  <button className="text-orange-400 hover:underline">View Details</button>
+                </Link>
+              </motion.div>
+            ))
+          )}
+        </div>
+      </motion.section>
+
+      {/* About Section */}
+      <motion.section
+        className="max-w-4xl mx-auto text-center space-y-4"
+        initial={{ opacity: 0, y: 40 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.6, delay: 0.2 }}
+      >
+        <h2 className="text-2xl font-bold">Our Story</h2>
+        <p className="text-gray-300 text-lg">
+          Miti Tibeb blends the elegance of woodwork with African artistic heritage. Each piece we craft carries a story rooted in culture, sustainability, and care.
+        </p>
+        <p className="text-gray-400">
+          We also offer interior design samples that showcase our partners' skill in both manufacturing and installing wooden works — ensuring peace and harmony in your space.
+        </p>
+      </motion.section>
+
+      {/* Vendor Invite */}
+      <motion.section
+        className="bg-[#1F1F1F] py-10 text-center rounded-lg max-w-4xl mx-auto mt-12 px-6"
+        initial={{ opacity: 0, y: 40 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.6, delay: 0.3 }}
+      >
+        <h3 className="text-2xl font-bold mb-4 text-white">Invite a Vendor</h3>
+        <p className="text-gray-400 mb-6">
+          Know a talented artisan or furniture vendor? Invite them to join our platform and share their creations.
+        </p>
+        <form
+          onSubmit={(e) => {
+            e.preventDefault();
+            // TODO: handle submission
+          }}
+          className="space-y-4"
+        >
+          <div className="flex flex-col md:flex-row gap-4 justify-center">
+            <input type="email" placeholder="Vendor Email" className="px-3 py-2 rounded-md bg-white text-black placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-orange-400" required />
+            <input type="text" placeholder="First Name" className="px-3 py-2 rounded-md bg-white text-black placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-orange-400" required />
+            <input type="text" placeholder="Other Name" className="px-3 py-2 rounded-md bg-white text-black placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-orange-400" required />
+          </div>
+          <button
+            type="submit"
+            className="mt-4 bg-orange-500 text-white px-6 py-2 rounded-md hover:bg-orange-600"
+          >
+            Join Us
+          </button>
+        </form>
+      </motion.section>
     </main>
   );
 }
