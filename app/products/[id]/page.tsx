@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import { Suspense } from "react";
+import { fetchApi } from '@/lib/api';
 
 // Define product type
 interface Product {
@@ -22,25 +23,8 @@ interface Product {
 
 async function getProduct(id: string): Promise<Product | null> {
   try {
-    const apiUrl = process.env.NEXT_PUBLIC_API_URL;
-    if (!apiUrl) {
-      throw new Error('NEXT_PUBLIC_API_URL is not defined');
-    }
-
-    const res = await fetch(`${apiUrl}/products/${id}`, {
-      next: { revalidate: 60 }, // Revalidate every minute
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      cache: 'no-store'
-    });
-
-    if (!res.ok) {
-      throw new Error(`Failed to fetch product: ${res.status}`);
-    }
-
-    const data = await res.json();
-    return data as Product;
+    const data = await fetchApi<Product>(`/products/${id}`);
+    return data;
   } catch (error) {
     console.error('Error fetching product:', error);
     return null;

@@ -3,13 +3,16 @@ import { motion } from 'framer-motion';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
+import { Button } from "@/components/ui/button";
+import { fetchApi } from '@/lib/api';
 
 const materialDescriptions: Record<string, string> = {
-  Eucalyptus: 'Discover our elegant Eucalyptus creations, known for their durability and beauty.',
-  Mahogany: 'Explore luxurious Mahogany pieces, prized for their rich color and fine grain.',
-  Pine: 'Browse affordable and versatile Pine furniture, perfect for any home.',
-  Podocarpus: 'Experience the unique charm of Podocarpus woodwork.',
-  Cedrela: 'Admire the lightness and resilience of Cedrela-crafted items.',
+  Eucalyptus: "Known for its durability and beautiful grain patterns, Eucalyptus wood is perfect for both indoor and outdoor furniture. Its natural resistance to decay makes it an excellent choice for long-lasting pieces.",
+  Mahogany: "Prized for its rich, reddish-brown color and fine grain, Mahogany is a premium hardwood that adds elegance to any space. Its natural luster and durability make it a favorite for high-end furniture.",
+  Pine: "Lightweight and versatile, Pine wood offers a warm, natural look at an affordable price. Its distinctive grain patterns and ease of workability make it popular for both traditional and modern designs.",
+  Oak: "Renowned for its strength and distinctive grain, Oak is a classic choice for furniture that stands the test of time. Its natural beauty and durability make it perfect for heirloom-quality pieces.",
+  Teak: "Highly valued for its natural oils and durability, Teak is the gold standard for outdoor furniture. Its resistance to weather and insects makes it ideal for pieces that need to withstand the elements.",
+  Walnut: "Known for its rich, dark color and beautiful grain patterns, Walnut adds sophistication to any space. Its workability and natural beauty make it a favorite for fine furniture and decorative pieces."
 };
 
 const materialImages: Record<string, string> = {
@@ -20,155 +23,161 @@ const materialImages: Record<string, string> = {
   Cedrela: '/icon2.png',
 };
 
-export default function HomePage() {
-  const [topMaterials, setTopMaterials] = useState<string[]>([]);
-  const [loading, setLoading] = useState(true);
+// Define product type
+interface Product {
+  id: string;
+  name: string;
+  price: number;
+  imageUrl: string;
+  material: string;
+  category: string;
+}
 
-  useEffect(() => {
-    async function fetchProducts() {
-      try {
-        const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/user/furniture`);
-        const products = await res.json();
-        // Count materials
-        const materialCount: Record<string, number> = {};
-        for (const product of products) {
-          if (product.material) {
-            materialCount[product.material] = (materialCount[product.material] || 0) + 1;
-          }
-        }
-        // Sort materials by frequency
-        const sorted = Object.entries(materialCount)
-          .sort((a, b) => b[1] - a[1])
-          .map(([mat]) => mat);
-        setTopMaterials(sorted.slice(0, 3));
-      } catch (e) {
-        setTopMaterials(['Eucalyptus', 'Mahogany', 'Pine']); // fallback
-      } finally {
-        setLoading(false);
+// Define material type
+interface Material {
+  name: string;
+  count: number;
+  description: string;
+}
+
+async function getTopMaterials(): Promise<Material[]> {
+  try {
+    const products = await fetchApi<Product[]>('/user/furniture');
+    
+    // Count materials
+    const materialCounts = products.reduce((acc, product) => {
+      acc[product.material] = (acc[product.material] || 0) + 1;
+      return acc;
+    }, {} as Record<string, number>);
+
+    // Convert to array and sort by count
+    const materials = Object.entries(materialCounts)
+      .map(([name, count]) => ({
+        name,
+        count,
+        description: materialDescriptions[name] || "A beautiful and durable wood material perfect for furniture making."
+      }))
+      .sort((a, b) => b.count - a.count)
+      .slice(0, 3); // Get top 3
+
+    return materials;
+  } catch (error) {
+    console.error('Error fetching materials:', error);
+    // Return fallback materials if API fails
+    return [
+      {
+        name: "Eucalyptus",
+        count: 0,
+        description: materialDescriptions["Eucalyptus"]
+      },
+      {
+        name: "Mahogany",
+        count: 0,
+        description: materialDescriptions["Mahogany"]
+      },
+      {
+        name: "Pine",
+        count: 0,
+        description: materialDescriptions["Pine"]
       }
-    }
-    fetchProducts();
-  }, []);
+    ];
+  }
+}
+
+export default async function Home() {
+  const topMaterials = await getTopMaterials();
 
   return (
-    <main className="bg-[#2E2E2E] text-white px-6 py-12 space-y-24">
-
+    <main className="flex min-h-screen flex-col items-center justify-between">
       {/* Hero Section */}
-      <motion.section
-        className="flex flex-col md:flex-row items-center justify-between gap-10 max-w-6xl mx-auto mt-16"
-        initial={{ opacity: 0, y: 40 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.6 }}
-      >
-        <div>
-          <h1 className="text-4xl md:text-5xl font-bold mb-4 leading-tight">
-            Embrace the Art of Nature with <span className="text-orange-400">Miti Tibeb</span>
-          </h1>
-          <p className="text-lg text-gray-300 mb-6 max-w-lg">
-            Discover handcrafted wooden products rooted in African wisdom and sustainable design.
-          </p>
-          <Link href="/products">
-            <button className="bg-orange-500 text-white px-6 py-2 rounded-md hover:bg-orange-600 transition">
-              Browse Products
-            </button>
-          </Link>
-        </div>
+      <section className="w-full h-[600px] relative">
         <Image
-          src="/icon2.png"
-          alt="Wood Art"
-          width={500}
-          height={350}
-          className="rounded-lg shadow-lg"
+          src="/hero-bg.jpg"
+          alt="Hero background"
+          fill
+          className="object-cover"
+          priority
         />
-      </motion.section>
-
-      {/* Featured Materials */}
-      <motion.section
-        className="max-w-6xl mx-auto"
-        initial={{ opacity: 0, y: 40 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.6, delay: 0.1 }}
-      >
-        <h2 className="text-2xl font-bold mb-6">Recent Uploaded Products</h2>
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8">
-          {loading ? (
-            [1, 2, 3].map((id) => (
-              <div key={id} className="bg-[#1F1F1F] p-4 rounded-lg animate-pulse h-64" />
-            ))
-          ) : (
-            topMaterials.map((material) => (
-              <motion.div
-                key={material}
-                className="bg-[#1F1F1F] p-4 rounded-lg shadow hover:shadow-orange-500/20 transition flex flex-col"
-                whileHover={{ scale: 1.03 }}
-              >
-                <Image
-                  src={materialImages[material] || '/icon2.png'}
-                  alt={material}
-                  width={400}
-                  height={160}
-                  className="rounded mb-4 object-cover"
-                />
-                <h3 className="text-lg font-semibold mb-2">{material}</h3>
-                <p className="text-sm text-gray-400 mb-4">
-                  {materialDescriptions[material] || `Explore our finest ${material} creations.`}
-                </p>
-                <Link href={`/products?material=${encodeURIComponent(material)}`}>
-                  <button className="text-orange-400 hover:underline mt-auto">View More</button>
-                </Link>
-              </motion.div>
-            ))
-          )}
+        <div className="absolute inset-0 bg-black/50 flex items-center justify-center">
+          <div className="text-center text-white space-y-6">
+            <h1 className="text-5xl font-bold">Welcome to Miti Tibeb</h1>
+            <p className="text-xl">Your one-stop shop for quality furniture</p>
+            <Link href="/products">
+              <Button>Shop Now</Button>
+            </Link>
+          </div>
         </div>
-      </motion.section>
+      </section>
+
+      {/* Featured Products */}
+      <section className="w-full py-16 px-4 md:px-6">
+        <div className="max-w-7xl mx-auto">
+          <h2 className="text-3xl font-bold text-center mb-12">Featured Products</h2>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            {/* Product cards will go here */}
+          </div>
+        </div>
+      </section>
+
+      {/* Recent Uploaded Products */}
+      <section className="w-full py-16 px-4 md:px-6 bg-gray-50">
+        <div className="max-w-7xl mx-auto">
+          <h2 className="text-3xl font-bold text-center mb-12">Popular Materials</h2>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            {topMaterials.map((material) => (
+              <div key={material.name} className="bg-white rounded-lg shadow-md overflow-hidden">
+                <div className="p-6">
+                  <h3 className="text-xl font-semibold mb-2">{material.name}</h3>
+                  <p className="text-gray-600 mb-4">{material.description}</p>
+                  <Link href={`/products?material=${material.name}`}>
+                    <Button variant="outline" className="w-full">
+                      View More
+                    </Button>
+                  </Link>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
 
       {/* About Section */}
-      <motion.section
-        className="max-w-4xl mx-auto text-center space-y-4"
-        initial={{ opacity: 0, y: 40 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.6, delay: 0.2 }}
-      >
-        <h2 className="text-2xl font-bold">Our Story</h2>
-        <p className="text-gray-300 text-lg">
-          Miti Tibeb blends the elegance of woodwork with African artistic heritage. Each piece we craft carries a story rooted in culture, sustainability, and care.
-        </p>
-        <p className="text-gray-400">
-          We also offer interior design samples that showcase our partners' skill in both manufacturing and installing wooden works — ensuring peace and harmony in your space.
-        </p>
-      </motion.section>
-
-      {/* Vendor Invite */}
-      <motion.section
-        className="bg-[#1F1F1F] py-10 text-center rounded-lg max-w-4xl mx-auto mt-12 px-6"
-        initial={{ opacity: 0, y: 40 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.6, delay: 0.3 }}
-      >
-        <h3 className="text-2xl font-bold mb-4 text-white">Invite a Vendor</h3>
-        <p className="text-gray-400 mb-6">
-          Know a talented artisan or furniture vendor? Invite them to join our platform and share their creations.
-        </p>
-        <form
-          onSubmit={(e) => {
-            e.preventDefault();
-            // TODO: handle submission
-          }}
-          className="space-y-4"
-        >
-          <div className="flex flex-col md:flex-row gap-4 justify-center">
-            <input type="email" placeholder="Vendor Email" className="px-3 py-2 rounded-md bg-white text-black placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-orange-400" required />
-            <input type="text" placeholder="First Name" className="px-3 py-2 rounded-md bg-white text-black placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-orange-400" required />
-            <input type="text" placeholder="Other Name" className="px-3 py-2 rounded-md bg-white text-black placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-orange-400" required />
+      <section className="w-full py-16 px-4 md:px-6">
+        <div className="max-w-7xl mx-auto">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
+            <div>
+              <h2 className="text-3xl font-bold mb-6">About Miti Tibeb</h2>
+              <p className="text-gray-600 mb-4">
+                We are dedicated to providing high-quality furniture and connecting customers with skilled vendors.
+              </p>
+              <Link href="/about">
+                <Button>Learn More</Button>
+              </Link>
+            </div>
+            <div className="relative h-[400px]">
+              <Image
+                src="/about-image.jpg"
+                alt="About Miti Tibeb"
+                fill
+                className="object-cover rounded-lg"
+              />
+            </div>
           </div>
-          <button
-            type="submit"
-            className="mt-4 bg-orange-500 text-white px-6 py-2 rounded-md hover:bg-orange-600"
-          >
-            Join Us
-          </button>
-        </form>
-      </motion.section>
+        </div>
+      </section>
+
+      {/* Vendor Invite Section */}
+      <section className="w-full py-16 px-4 md:px-6 bg-orange-50">
+        <div className="max-w-7xl mx-auto text-center">
+          <h2 className="text-3xl font-bold mb-6">Are You a Vendor?</h2>
+          <p className="text-gray-600 mb-8 max-w-2xl mx-auto">
+            Join our platform to showcase your furniture and reach more customers.
+          </p>
+          <Link href="/vendor/signup">
+            <Button>Become a Vendor</Button>
+          </Link>
+        </div>
+      </section>
     </main>
   );
 }

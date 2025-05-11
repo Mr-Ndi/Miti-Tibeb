@@ -5,28 +5,18 @@ import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
+import { fetchApi } from '@/lib/api';
 
-const products = [
-  {
-    id: '1',
-    name: 'Carved Wooden Bowl',
-    price: 45,
-    category: 'Kitchen',
-    material: 'Mahogany',
-    imageUrl: '/icon2.png',
-    vendor: 'Makazi Creations',
-  },
-  {
-    id: '2',
-    name: 'Wooden Wall Decor',
-    price: 70,
-    category: 'Living Room',
-    material: 'Eucalyptus',
-    imageUrl: '/icon2.png',
-    vendor: 'Ubuntu Furnishings',
-  },
-  // Add more entries as needed
-];
+// Define product type
+interface Product {
+  id: string;
+  name: string;
+  price: number;
+  category: string;
+  material: string;
+  imageUrl: string;
+  vendor: string;
+}
 
 const categories = ['Kitchen', 'Living Room', 'Bedroom', 'Office', 'Outdoor'];
 const materials = ['Eucalyptus', 'Mahogany', 'Pine', 'Podocarpus', 'Cedrela'];
@@ -35,6 +25,8 @@ export default function ProductsPage() {
   const [search, setSearch] = useState('');
   const [selectedCategory, setCategory] = useState('');
   const [selectedMaterial, setMaterial] = useState('');
+  const [products, setProducts] = useState<Product[]>([]);
+  const [loading, setLoading] = useState(true);
   const searchParams = useSearchParams();
 
   useEffect(() => {
@@ -43,6 +35,21 @@ export default function ProductsPage() {
       setMaterial(materialFromQuery);
     }
   }, [searchParams]);
+
+  useEffect(() => {
+    async function loadProducts() {
+      try {
+        const data = await fetchApi<Product[]>('/user/furniture');
+        setProducts(data);
+      } catch (e) {
+        console.error('Failed to load products:', e);
+        setProducts([]);
+      } finally {
+        setLoading(false);
+      }
+    }
+    loadProducts();
+  }, []);
 
   const filteredProducts = products.filter((product) => {
     const matchesSearch = product.name.toLowerCase().includes(search.toLowerCase());
@@ -97,35 +104,41 @@ export default function ProductsPage() {
 
         {/* Product Grid */}
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8">
-          {filteredProducts.map((product, index) => (
-            <motion.div
-            key={product.id}
-            className="bg-[#1F1F1F] rounded-lg overflow-hidden p-4"
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: index * 0.1 }}
-          >
-            <Image
-              src={product.imageUrl}
-              alt={product.name}
-              width={400}
-              height={300}
-              className="rounded mb-4"
-            />
-            <h2 className="text-xl font-semibold">{product.name}</h2>
-            <p className="text-sm text-gray-400">{product.vendor}</p>
-            <div className="flex justify-between items-center mt-2">
-              <span className="text-orange-400 font-bold">${product.price}</span>
-              <div className="text-sm text-gray-300">
-                <span className="mr-2">{product.category}</span>
-                <span className="italic">{product.material}</span>
-              </div>
-            </div>
-            <Link href={`/products/${product.id}`}>
-              <button className="text-orange-400 hover:underline mt-4">View Details</button>
-            </Link>
-          </motion.div>
-          ))}
+          {loading ? (
+            [1, 2, 3].map((id) => (
+              <div key={id} className="bg-[#1F1F1F] p-4 rounded-lg animate-pulse h-64" />
+            ))
+          ) : (
+            filteredProducts.map((product, index) => (
+              <motion.div
+                key={product.id}
+                className="bg-[#1F1F1F] rounded-lg overflow-hidden p-4"
+                initial={{ opacity: 0, y: 30 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: index * 0.1 }}
+              >
+                <Image
+                  src={product.imageUrl}
+                  alt={product.name}
+                  width={400}
+                  height={300}
+                  className="rounded mb-4"
+                />
+                <h2 className="text-xl font-semibold">{product.name}</h2>
+                <p className="text-sm text-gray-400">{product.vendor}</p>
+                <div className="flex justify-between items-center mt-2">
+                  <span className="text-orange-400 font-bold">${product.price}</span>
+                  <div className="text-sm text-gray-300">
+                    <span className="mr-2">{product.category}</span>
+                    <span className="italic">{product.material}</span>
+                  </div>
+                </div>
+                <Link href={`/products/${product.id}`}>
+                  <button className="text-orange-400 hover:underline mt-4">View Details</button>
+                </Link>
+              </motion.div>
+            ))
+          )}
         </div>
       </div>
     </main>
