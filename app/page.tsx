@@ -252,10 +252,38 @@ export default function HomePage() {
           Know a talented artisan or furniture vendor? Invite them to join our platform and share their creations.
         </p>
         <form
-          onSubmit={(e) => {
+          onSubmit={async (e) => {
             e.preventDefault();
-            // TODO: handle submission
+            const form = e.target as HTMLFormElement;
+          
+            const data = {
+              email: (form[0] as HTMLInputElement).value,
+              firstName: (form[1] as HTMLInputElement).value,
+              otherName: (form[2] as HTMLInputElement).value,
+            };
+          
+            try {
+              const response = await fetch('/admin/envite', {
+                method: 'POST',
+                headers: {
+                  'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(data),
+              });
+          
+              if (response.ok) {
+                alert('Vendor invited successfully!');
+                form.reset();
+              } else {
+                const errorMessage = await response.text();
+                alert(`Error: ${errorMessage}`);
+              }
+            } catch (error) {
+              console.error('Error submitting vendor invite:', error);
+              alert('Something went wrong. Please try again later.');
+            }
           }}
+          
           className="space-y-4"
         >
           <div className="flex flex-col md:flex-row gap-4 justify-center">
